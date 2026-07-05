@@ -1,0 +1,38 @@
+name: Feature Branch Regression
+
+on:
+  push:
+    branches:
+      - "mvp-backend-tests"
+      - "feature/**"
+  pull_request:
+    branches:
+      - "mvp-backend-tests"
+      - "feature/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  full-regression:
+    name: full-regression
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+
+      - name: Run backend regression suite
+        run: uv run pytest
